@@ -3,3 +3,12 @@ spring:
     name: accounts
   profiles:
     active: production
+
+  datasource:
+    url: ${accounts.datasource.url}
+    username: ${accounts.datasource.username}
+    password: ${accounts.datasource.password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${accounts.datasource.ddl-mode}
