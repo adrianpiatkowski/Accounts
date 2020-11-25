@@ -25,10 +25,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountsController {
 
+    @Value("${application.allow-get-accounts}")
+    private boolean allowGetAccounts;
+
     private final AccountsService accountsService;
 
     @GetMapping
     public GetAccountsResponse getAccounts(@RequestParam("customerId") Long customerId) {
+        if(!allowGetAccounts) {
+            log.info("Getting accounts is disabled");
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Getting accounts is disabled");
+        }
         List<AccountsDto> accounts = accountsService.getAccounts(customerId);
         return GetAccountsResponse.of(accounts);
     }

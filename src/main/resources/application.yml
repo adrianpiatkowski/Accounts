@@ -12,3 +12,25 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${accounts.datasource.ddl-mode}
+
+# ACTUATOR INFO
+info:
+  app:
+    name: "Accounts"
+    version: "0.0.1"
+    profile: ${spring.profiles.active}
+  serverInfo:
+    port: ${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+application:
+  allow-get-accounts: ${accounts.allow-get-accounts}
+
+
+eureka:
+  client: ${eureka-client}
