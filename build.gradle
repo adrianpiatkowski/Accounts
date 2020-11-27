@@ -1,3 +1,15 @@
+import org.springframework.cloud.contract.verifier.config.TestFramework
+
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+	dependencies {
+		classpath 'org.springframework.cloud:spring-cloud-contract-gradle-plugin:2.2.3.RELEASE'
+	}
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.3.0.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
@@ -8,49 +20,62 @@ group = 'com.Microservice'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+apply plugin: 'spring-cloud-contract'
+apply plugin: 'maven-publish'
+
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
-
 
 ext {
 	set('springCloudVersion', "Hoxton.SR5")
 }
 
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+	implementation 'junit:junit:4.12'
 	compileOnly 'org.postgresql:postgresql:42.2.13'
-	compileOnly 'org.projectlombok:lombok:1.18.16'
-	annotationProcessor 'org.projectlombok:lombok:1.18.16'
+	compileOnly 'org.projectlombok:lombok:1.18.12'
+	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.16'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+	testCompileOnly 'org.projectlombok:lombok:1.18.12'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-
-
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	testImplementation 'com.h2database:h2:1.4.200'
 }
-
-
 
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-
 	}
+}
+
+contracts {
+	testFramework = TestFramework.JUNIT5
+	packageWithBaseClasses = 'com.Microservice.Accounts'
 }
 
 test {
 	useJUnitPlatform()
+}
+
+task stubsJar(type: Jar) {
+	classifier = "stubs"
+	into("META-INF/${project.group}/${project.name}/${project.version}/mappings") {
+		include('**/*.*')
+		from("${project.buildDir}/generated-snippets/stubs")
+	}
 }
