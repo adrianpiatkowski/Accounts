@@ -14,6 +14,8 @@ plugins {
 	id 'org.springframework.boot' version '2.3.0.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+
+	id "org.openrepose.gradle.plugins.jaxb" version "2.5.0"
 }
 
 group = 'com.Microservice'
@@ -33,6 +35,8 @@ ext {
 }
 
 dependencies {
+	implementation'com.microservice:commons:0.0.1'
+	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -55,6 +59,14 @@ dependencies {
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 	testImplementation 'com.h2database:h2:1.4.200'
+
+
+
+	jaxb 'org.glassfish.jaxb:jaxb-xjc:2.3.2'
+	jaxb 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+
+	compile 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+	compile 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
 }
 
 dependencyManagement {
@@ -79,3 +91,18 @@ task stubsJar(type: Jar) {
 		from("${project.buildDir}/generated-snippets/stubs")
 	}
 }
+
+jaxb {
+	xsdDir = "${project.buildDir}/generated-test-sources"
+	xjc {
+		generateEpisodeFiles = false
+		generatePackage = "org.Microservice.Accounts"
+		destinationDir = "${buildDir}/generated-sources/jaxb"
+	}
+}
+
+tasks.named("xsd-dependency-tree").configure {
+	outputs.upToDateWhen { false }
+}
+
+compileJava.dependsOn(xjc)

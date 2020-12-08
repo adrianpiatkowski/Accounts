@@ -21,4 +21,12 @@ public class AccountsService {
         List<Account> accounts = accountRepository.findAllByCustomerId(customerId);
         return mapper.mapToAccountsDto(accounts);
     }
+
+    public AccountsDto getAccountForNrb(String nrb) {
+        return (AccountsDto) mapper.mapToAccountsDto((List<Account>) accountRepository.findByNrb(nrb));
+    }
+
+    public AccountsDto saveAccount(AccountsDto accountDTO) {
+        return (AccountsDto) mapper.mapToAccountsDto((List<Account>) accountRepository.save(mapper.mapToAccount(accountDTO)));
+    }
 }

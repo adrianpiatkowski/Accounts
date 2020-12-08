@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Builder
 public class AccountsDto {
     private long id;
+    private Long customerId;
     private String nrb;
     private String currency;
     private BigDecimal availableFunds;

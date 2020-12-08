@@ -18,4 +18,9 @@ public class AccountMapper {
                 .availableFunds(account.getAvailablefunds())
                 .build()).collect(Collectors.toList());
     }
+
+    public Account mapToAccount(final AccountsDto accountDTO) {
+        return new Account(accountDTO.getId(), accountDTO.getCustomerId(), accountDTO.getNrb(), accountDTO.getCurrency(),
+                accountDTO.getAvailableFunds());
+    }
 }

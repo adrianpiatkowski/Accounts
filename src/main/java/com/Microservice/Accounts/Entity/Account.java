@@ -21,9 +21,9 @@ public class Account {
     @Id
     @GeneratedValue
     private Long id;
-
+    private Long customerId;
     private String nrb;
     private String currency;
     private BigDecimal availablefunds;
-    private Long customerId;
+
 }
